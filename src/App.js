@@ -3,8 +3,7 @@ import uuid from "uuid";
 import moment from "moment";
 import "./styles.css";
 
-//test JiaPing
-//test github
+//github rick test
 //notes app
 //functionality:
 //-create note,
@@ -43,31 +42,22 @@ import "./styles.css";
 //}
 //},[])
 
-const demoState = {
-  id: "12312dasfdsaf",
-  note: "Note",
-  author: "Someone",
-  createdAt: moment()
-};
-
 const SingleNote = props => {
-  // useEffect(() => {
-  //   props.setNote(demoState)
-  // },[])
-
   return (
     <div>
-      <p>{demoState.note}</p>
-      <p>{demoState.author}</p>
-      <p>{demoState.createdAt.format("MMM Do, YYYY")}</p>
+      <p>{props.note.noteText}</p>
+      <p>{props.note.author}</p>
+      <p>{props.note.createdAt.format("MMM Do, YYYY")}</p>
+      <p>------------</p>
     </div>
   );
 };
 
-const NoteForm = () => {
+const NoteForm = props => {
   const [title, setTitle] = useState("foo");
-  const [author, setAuthor] = useState("");
-  console.log(title);
+  const [author, setAuthor] = useState("Dustin");
+  const [noteText, setNoteText] = useState("text here");
+
   const onChangeTitle = e => {
     const title = e.target.value;
     setTitle(title);
@@ -78,24 +68,46 @@ const NoteForm = () => {
     setAuthor(author);
   };
 
-  //const onChangeAuthor
+  const onChangeNoteText = e => {
+    const noteText = e.target.value;
+    setNoteText(noteText);
+  };
+  const submitForm = e => {
+    e.preventDefault();
+    props.setNotes([
+      ...props.notes,
+      {
+        id: uuid(),
+        noteText,
+        title,
+        author,
+        createdAt: moment()
+      }
+    ]);
+  };
 
   return (
     <div>
-      <form>
+      <form onSubmit={submitForm}>
         <input
           value={title}
           onChange={onChangeTitle}
           placeholder="Title"
           required
         />
-
         <input
           value={author}
           onChange={onChangeAuthor}
           placeholder="Author"
           required
         />
+        <input
+          value={noteText}
+          onChange={onChangeNoteText}
+          placeholder="Note"
+          required
+        />
+        <button>Submit</button>
       </form>
     </div>
   );
@@ -104,33 +116,17 @@ const NoteForm = () => {
 const App = () => {
   //useState is a function from which we are receving an array with two items
 
-  const demoState = {
-    id: "12312dasfdsaf",
-    note: "Note",
-    author: "Someone",
-    createdAt: moment()
-  };
+  const [notes, setNotes] = useState([]);
 
-  const [notes, setNote] = useState([]);
-
-  const createNewNote = () => {
-    setNote([
-      ...notes,
-      {
-        id: uuid(),
-        note: "Note",
-        title: "Title",
-        author: "Someone",
-        createdAt: moment().format("MMM Do, YYYY")
-      }
-    ]);
-  };
+  // useEffect(() => console.log(notes));
 
   return (
     <div className="App">
       <h1>Our Notes</h1>
-      <SingleNote setNote={setNote} />
-      <NoteForm />
+      <NoteForm setNotes={setNotes} notes={notes} />
+      {notes.map(note => (
+        <SingleNote note={note} key={note.id} />
+      ))}
     </div>
   );
 };
