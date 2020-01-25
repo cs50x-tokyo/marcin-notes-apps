@@ -41,6 +41,13 @@ import "./styles.css";
 // conosle.log('You deleted the note')
 //}
 //},[])
+const updateNote = key => {
+  console.log(key);
+};
+
+const deleteNote = key => {
+  console.log(key);
+};
 
 const SingleNote = props => {
   return (
@@ -49,6 +56,8 @@ const SingleNote = props => {
       <p>{props.note.author}</p>
       <p>{props.note.createdAt.format("MMM Do, YYYY")}</p>
       <p>------------</p>
+      <button onClick={updateNote(props.note.id)}>Update</button>
+      <button onClick={deleteNote(props.note.id)}>Delete</button>
     </div>
   );
 };
@@ -124,7 +133,7 @@ const App = () => {
     <div className="App">
       <h1>Our Notes</h1>
       <NoteForm setNotes={setNotes} notes={notes} />
-      {notes.map(note => (
+      {notes.map((note, index) => (
         <SingleNote note={note} key={note.id} />
       ))}
     </div>
