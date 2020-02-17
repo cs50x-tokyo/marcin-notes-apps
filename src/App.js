@@ -41,89 +41,163 @@ import "./styles.css";
 // conosle.log('You deleted the note')
 //}
 //},[])
-const updateNote = key => {
-  console.log(key);
-};
 
-const deleteNote = key => {
-  console.log(key);
-};
-
-const SingleNote = props => {
-  return (
-    <div>
-      <p>{props.note.noteText}</p>
-      <p>{props.note.author}</p>
-      <p>{props.note.createdAt.format("MMM Do, YYYY")}</p>
-      <p>------------</p>
-      <button onClick={updateNote(props.note.id)}>Update</button>
-      <button onClick={deleteNote(props.note.id)}>Delete</button>
-    </div>
-  );
-};
-
-const NoteForm = props => {
-  const [title, setTitle] = useState("foo");
-  const [author, setAuthor] = useState("Dustin");
-  const [noteText, setNoteText] = useState("text here");
-
-  const onChangeTitle = e => {
-    const title = e.target.value;
-    setTitle(title);
-  };
-
-  const onChangeAuthor = e => {
-    const author = e.target.value;
-    setAuthor(author);
-  };
-
-  const onChangeNoteText = e => {
-    const noteText = e.target.value;
-    setNoteText(noteText);
-  };
-  const submitForm = e => {
-    e.preventDefault();
-    props.setNotes([
-      ...props.notes,
-      {
-        id: uuid(),
-        noteText,
-        title,
-        author,
-        createdAt: moment()
-      }
-    ]);
-  };
-
-  return (
-    <div>
-      <form onSubmit={submitForm}>
-        <input
-          value={title}
-          onChange={onChangeTitle}
-          placeholder="Title"
-          required
-        />
-        <input
-          value={author}
-          onChange={onChangeAuthor}
-          placeholder="Author"
-          required
-        />
-        <input
-          value={noteText}
-          onChange={onChangeNoteText}
-          placeholder="Note"
-          required
-        />
-        <button>Submit</button>
-      </form>
-    </div>
-  );
-};
-
+//1. on pushing update button
+//2. Get the note whose update button we pushed
+//3. Place the note object in the state.
+//4. the chosen notes data shows in the respective boxes
+//5. user changes the data and pushes submit
+// 6. Data is update
 const App = () => {
   //useState is a function from which we are receving an array with two items
+  const [title, setTitle] = useState("foo123");
+  const [author, setAuthor] = useState("Dustin");
+  const [noteText, setNoteText] = useState("text here");
+  const [update, setUpdate] = useState(false);
+
+  useEffect(() => {
+    setUpdate(update);
+  }, [update]);
+
+  const deleteNote = key => {
+    console.log(key);
+  };
+
+  const SingleNote = props => {
+    // const [updatedTitle, setUpdatedTitle] = useState("");
+    // const [updatedAuthor, setUpdatedAuthor] = useState("");
+    // const [updatedNoteText, setUpdatedNoteText] = useState("");
+
+    //note
+    //setNotes
+    //id
+
+    //update
+    const UpdateComponent = () => {
+      const onChangeTitle = e => {
+        const title = e.target.value;
+        setTitle(title);
+      };
+
+      return (
+        <div>
+          <label>
+            Title:
+            <input
+              value={title}
+              onChange={onChangeTitle}
+              placeholder="Title"
+              required
+            />
+          </label>
+        </div>
+      );
+    };
+
+    const updateNote = note => {
+      //render a form with values for the note
+      setUpdate(true);
+
+      console.log("Update pressed");
+      console.log(note);
+
+      //use setState to update the note.
+      setTitle(note.title);
+      setAuthor(note.author);
+      setNoteText(note.noteText);
+
+      // render
+      // return
+    };
+
+    return (
+      <div>
+        <p>{props.note.noteText}</p>
+        <p>{props.note.author}</p>
+        <p>{props.note.createdAt.format("MMM Do, YYYY")}</p>
+        <p>------------</p>
+        {/* trigger update component */}
+        {update ? <UpdateComponent /> : console.log(false)}
+        <button onClick={() => updateNote(props.note)}>Update</button>
+        <button onClick={() => deleteNote(props.note.id)}>Delete</button>
+      </div>
+    );
+  };
+
+  //create a new note
+  const NoteForm = props => {
+    // console.log(props);
+
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+    const [noteText, setNoteText] = useState("");
+
+    const onChangeTitle = e => {
+      const title = e.target.value;
+      setTitle(title);
+    };
+
+    const onChangeAuthor = e => {
+      const author = e.target.value;
+      setAuthor(author);
+    };
+
+    const onChangeNoteText = e => {
+      const noteText = e.target.value;
+      setNoteText(noteText);
+    };
+    //Create
+    const submitForm = e => {
+      e.preventDefault();
+      props.setNotes([
+        ...props.notes,
+        {
+          id: uuid(),
+          noteText,
+          title,
+          author,
+          createdAt: moment()
+        }
+      ]);
+    };
+
+    return (
+      <div>
+        <form onSubmit={submitForm}>
+          <label>
+            Title:
+            <input
+              value={title}
+              onChange={onChangeTitle}
+              placeholder="Title"
+              required
+            />
+          </label>
+
+          <label>
+            Author:
+            <input
+              value={author}
+              onChange={onChangeAuthor}
+              placeholder="Author"
+              required
+            />
+          </label>
+          <br />
+          <label>
+            Text:
+            <input
+              value={noteText}
+              onChange={onChangeNoteText}
+              placeholder="Note"
+              required
+            />
+          </label>
+          <button>Submit</button>
+        </form>
+      </div>
+    );
+  };
 
   const [notes, setNotes] = useState([]);
 
@@ -134,7 +208,7 @@ const App = () => {
       <h1>Our Notes</h1>
       <NoteForm setNotes={setNotes} notes={notes} />
       {notes.map((note, index) => (
-        <SingleNote note={note} key={note.id} />
+        <SingleNote note={note} setNotes={setNotes} key={note.id} />
       ))}
     </div>
   );
